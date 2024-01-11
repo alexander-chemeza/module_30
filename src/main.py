@@ -25,15 +25,19 @@ async def shutdown():
     await engine.dispose()
 
 
-@app.get('/recipes', response_model=List[schemas.RecipeShorOut])
+@app.get("/recipes", response_model=List[schemas.RecipeShorOut])
 async def recipes() -> List[models.Recipe]:
-    res = await session.execute(select(models.Recipe).order_by(models.Recipe.views, models.Recipe.time))
+    res = await session.execute(
+        select(models.Recipe).order_by(models.Recipe.views, models.Recipe.time)
+    )
     return res.scalars().all()
 
 
-@app.get('/recipes/{id}', response_model=schemas.RecipeOut)
+@app.get("/recipes/{id}", response_model=schemas.RecipeOut)
 async def recipe_info(id: int) -> models.Recipe:
-    res = await session.execute(select(models.Recipe).where(models.Recipe.id == int(id)))
+    res = await session.execute(
+        select(models.Recipe).where(models.Recipe.id == int(id))
+    )
     if not res.scalars().first():
         raise HTTPException(status_code=404, detail="Recipe not found")
     return res.scalars().first()
